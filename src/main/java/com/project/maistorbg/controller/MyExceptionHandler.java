@@ -1,7 +1,6 @@
 package com.project.maistorbg.controller;
 
 import com.project.maistorbg.model.exceptions.BadRequestException;
-import com.project.maistorbg.model.exceptions.ForbiddenException;
 import com.project.maistorbg.model.exceptions.NotFoundException;
 import com.project.maistorbg.model.exceptions.UnauthorizedException;
 import com.project.maistorbg.model.DTOs.ErrorDTO;
