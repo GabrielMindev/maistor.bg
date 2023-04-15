@@ -33,13 +33,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
     public ErrorDTO handleNotFound(Exception e){
       return generateErrorDTO(e, HttpStatus.NOT_FOUND);
     }
-
-    @ExceptionHandler(ForbiddenException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorDTO handleForbiddenException(Exception e){
-       return generateErrorDTO(e,HttpStatus.FORBIDDEN);
-    }
-
+    
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDTO handleAllOthers(Exception e){
