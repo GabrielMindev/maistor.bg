@@ -1,8 +1,11 @@
 package com.project.maistorbg.model.DTOs;
 
+import com.project.maistorbg.model.DTOs.CommentDTOs.CommentWithoutSenderDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,4 +20,5 @@ public class UserWithoutPasswordDTO {
     private String phoneNumber;
     private String roleName;
     private String profilePhotoUrl;
+    private List<CommentWithoutSenderDTO> comments;
 }

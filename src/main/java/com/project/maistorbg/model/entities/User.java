@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,6 +38,10 @@ public class User {
     private String phoneNumber;
     @Column(name = "registration_date")
     private LocalDate registrationDate;
+    @OneToMany(mappedBy = "sender")
+    private List<Comment> comments;
+    @OneToMany(mappedBy = "receiver")
+    private List<Comment> receiverComments;
 
 // Doesn't compile because of missing classes
 //    @ManyToMany

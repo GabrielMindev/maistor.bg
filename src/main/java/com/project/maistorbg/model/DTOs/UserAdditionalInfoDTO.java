@@ -1,5 +1,6 @@
 package com.project.maistorbg.model.DTOs;
 
+import com.project.maistorbg.model.DTOs.CommentDTOs.CommentSimpleDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
