@@ -49,10 +49,10 @@ public class UserController extends MyExceptionHandler {
         return userService.getAllUsers();
     }
 
-//    @GetMapping("users/categories/{categoryName")
-//    public List<UserWithoutPasswordDTO> getByCategory(@PathVariable CategoryWithNameDTO categoryName) {
-//        return userService.getAllUsersByCategory(categoryName.getCategoryName());
-//    }
+    @GetMapping("users/categories/{categoryName}")
+    public List<UserWithoutPasswordDTO> getByCategory(@PathVariable CategoryWithNameDTO categoryName) {
+        return userService.getAllWorkmenForCategory(categoryName.getCategoryName());
+    }
 
     @PutMapping("users")
     public UserEditDTO editUser(@RequestBody UserEditDTO dto, HttpServletRequest request) {
@@ -70,6 +70,16 @@ public class UserController extends MyExceptionHandler {
         HttpSession session = request.getSession();
         if (session != null && session.getAttribute("LOGGED") != null) {
             userService.deleteProfile((Integer) request.getSession().getAttribute("LOGGED_ID"));
+        } else {
+            throw new UnauthorizedException("You have to login!");
+        }
+    }
+
+    @PostMapping("/users/categories")
+    public UserAdditionalInfoDTO addCategory(@RequestBody CategoryWithNameDTO categoryName, HttpServletRequest request){
+        HttpSession session = request.getSession();
+        if (session != null && session.getAttribute("LOGGED") != null) {
+            return userService.addCategory((Integer) request.getSession().getAttribute("LOGGED_ID"), categoryName.getCategoryName());
         } else {
             throw new UnauthorizedException("You have to login!");
         }

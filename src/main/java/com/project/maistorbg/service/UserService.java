@@ -1,12 +1,14 @@
 package com.project.maistorbg.service;
 
 import com.project.maistorbg.model.DTOs.*;
+import com.project.maistorbg.model.entities.RepairCategory;
 import com.project.maistorbg.model.entities.User;
 import com.project.maistorbg.model.exceptions.BadRequestException;
 import com.project.maistorbg.model.exceptions.NotFoundException;
 import com.project.maistorbg.model.exceptions.UnauthorizedException;
 import com.project.maistorbg.util.UtilityUser;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -92,10 +94,13 @@ public class UserService extends AbstractService{
                 .collect(Collectors.toList());
     }
 
-//    public List<UserWithoutPasswordDTO> getAllUsersByCategory(String categoryName) {
-//        //return getAllUsersByCategory(categoryName);
-//        return userRepository.findAllByCategory(categoryName);
-//    }
+    public List<UserWithoutPasswordDTO> getAllWorkmenForCategory(String categoryName) {
+        RepairCategory category = categoryRepository.findByName(categoryName).orElseThrow(()-> new NotFoundException("Category not found"));
+        return userRepository.getAllByCategoriesContaining(category)
+                .stream()
+                .map(user -> mapper.map(user,UserWithoutPasswordDTO.class))
+                .collect(Collectors.toList());
+    }
 
 
     public UserEditDTO editUser(UserEditDTO dto, int id) {
@@ -129,5 +134,23 @@ public class UserService extends AbstractService{
 
     public void deleteProfile(int id) {
       userRepository.deleteById(id);
+    }
+
+
+    @Transactional
+    public UserAdditionalInfoDTO addCategory(int id, String categoryName) {
+        User user = userRepository.findById(id).orElseThrow(()-> new BadRequestException("User not found"));
+        RepairCategory category = categoryRepository.findByName(categoryName).orElseThrow(()-> new BadRequestException("Category not found"));
+        if (!user.getRoleName().equals("workman")){
+            throw new BadRequestException("User isn't a workman");
+        }
+        if (user.getCategories().contains(category)){
+            throw new BadRequestException("User already have this category");
+        }
+        user.getCategories().add(category);
+        user = userRepository.save(user);
+        category.getUsers().add(user);
+        categoryRepository.save(category);
+        return  mapper.map(user, UserAdditionalInfoDTO.class);
     }
 }

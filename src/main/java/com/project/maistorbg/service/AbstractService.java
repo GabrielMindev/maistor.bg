@@ -1,5 +1,6 @@
 package com.project.maistorbg.service;
 
+import com.project.maistorbg.model.repositories.CategoryRepository;
 import com.project.maistorbg.model.repositories.CommentRepository;
 import com.project.maistorbg.model.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -11,6 +12,8 @@ public abstract class AbstractService {
 
     @Autowired
     protected UserRepository userRepository;
+    @Autowired
+    protected CategoryRepository categoryRepository;
 
     @Autowired
     protected CommentRepository commentRepository;

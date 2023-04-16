@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Setter
 @Getter
 @AllArgsConstructor
@@ -15,6 +18,8 @@ public class RepairCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column
-    private String name_repair;
+    @Column(name = "name_repair")
+    private String name;
+    @ManyToMany(mappedBy = "categories")
+    private Set<User> users = new HashSet<>();
 }

@@ -6,7 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 
 @Getter
 @Setter
@@ -43,14 +47,14 @@ public class User {
     @OneToMany(mappedBy = "receiver")
     private List<Comment> receiverComments;
 
+    @ManyToMany
+    @JoinTable(
+            name = "workman_categories",
+            joinColumns = @JoinColumn(name = "workman_id"),
+            inverseJoinColumns = @JoinColumn(name = "workman_repair_category_id")
+    )
+    private Set<RepairCategory> categories = new HashSet<>();
 // Doesn't compile because of missing classes
-//    @ManyToMany
-//    @JoinTable(
-//            name = "workman_categories",
-//            joinColumns = @JoinColumn(name = "workman_id"),
-//            inverseJoinColumns = @JoinColumn(name = "workman_repair_category_id")
-//    )
-//    private Set<Category> categories = new HashSet<>();
 //    @OneToMany
 //    @JoinColumn(name = "owner_id")
 //    private Set<Post> posts = new HashSet<>();
