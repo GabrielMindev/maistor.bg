@@ -1,5 +1,6 @@
 package com.project.maistorbg.util;
 
+import com.project.maistorbg.model.DTOs.UserEditDTO;
 import com.project.maistorbg.model.DTOs.UserRegisterDTO;
 import com.project.maistorbg.model.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ import java.util.regex.Pattern;
 public class UtilityUser {
 
     //Ensures that names will be written only with letters.
-    public static final String nameRegex = "^[a-z]+$";
+    public static final String nameRegex = "^[a-zA-Z]+$";
 
 
     public static boolean isPasswordMatch(UserRegisterDTO dto) {

@@ -1,20 +1,21 @@
 package com.project.maistorbg.service;
 
-import com.project.maistorbg.model.DTOs.UserAdditionalInfoDTO;
-import com.project.maistorbg.model.DTOs.UserLoginDTO;
-import com.project.maistorbg.model.DTOs.UserRegisterDTO;
-import com.project.maistorbg.model.DTOs.UserWithoutPasswordDTO;
+import com.project.maistorbg.model.DTOs.*;
 import com.project.maistorbg.model.entities.User;
 import com.project.maistorbg.model.exceptions.BadRequestException;
 import com.project.maistorbg.model.exceptions.NotFoundException;
 import com.project.maistorbg.model.exceptions.UnauthorizedException;
 import com.project.maistorbg.util.UtilityUser;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService extends AbstractService{
@@ -85,4 +86,48 @@ public class UserService extends AbstractService{
     }
 
 
+    public List<UserAdditionalInfoDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(u->mapper.map(u, UserAdditionalInfoDTO.class))
+                .collect(Collectors.toList());
+    }
+
+//    public List<UserWithoutPasswordDTO> getAllUsersByCategory(String categoryName) {
+//        //return getAllUsersByCategory(categoryName);
+//        return userRepository.findAllByCategory(categoryName);
+//    }
+
+
+    public UserEditDTO editUser(UserEditDTO dto, int id) {
+        User user = userRepository.findById(id).orElseThrow(()-> new NotFoundException("User not found"));
+        if (!dto.getFirstName().matches(UtilityUser.nameRegex)) {
+            throw new BadRequestException("Invalid first name. You should use only letters.");
+        }
+
+        if (!dto.getLastName().matches(UtilityUser.nameRegex)) {
+            throw new BadRequestException("Invalid last name. You should use only letters.");
+        }
+        String phoneNumber = UtilityUser.validateAndRestyleNumber(dto.getPhoneNumber());
+        if (userRepository.findUserByPhoneNumber(phoneNumber).isPresent()){
+            throw new BadRequestException("User with the same phone number already exists!");
+        }
+        if (!UtilityUser.isEmailValid(dto.getEmail())){
+            throw new BadRequestException("Invalid email");
+        }
+
+        user.setUsername(dto.getUsername());
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setAge(dto.getAge());
+        user.setRoleName(dto.getRoleName());
+        user.setPhoneNumber(phoneNumber);
+        user.setProfilePhoto(dto.getProfilePhotoUrl());
+        user.setEmail(dto.getEmail());
+        user = userRepository.save(user);
+        return mapper.map(user,UserEditDTO.class);
+    }
+
+    public void deleteProfile(int id) {
+      userRepository.deleteById(id);
+    }
 }
