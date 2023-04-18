@@ -8,7 +8,6 @@ import lombok.Setter;
 
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "repair_categories")
 public class RepairCategory {
@@ -16,5 +15,5 @@ public class RepairCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column
-    private String name_repair;
+    private String nameRepair;
 }

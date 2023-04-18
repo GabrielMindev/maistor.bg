@@ -40,8 +40,6 @@ public class CommentService extends AbstractService{
         }
         comment.setText(dto.getText());
         comment.setDate(LocalDateTime.now());
-        comment.setReceiver(userRepository.findById(dto.getReceiverId())
-                .orElseThrow(() -> new NotFoundException("The resource has not been found!")));
         Comment updatedComment = commentRepository.save(comment);
         return mapper.map(updatedComment, CommentInfoDTO.class);
     }
