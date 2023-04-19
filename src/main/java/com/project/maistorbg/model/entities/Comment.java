@@ -1,11 +1,11 @@
 package com.project.maistorbg.model.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Setter
@@ -20,7 +20,7 @@ public class Comment {
     @Column
     private String text;
     @Column
-    private LocalDateTime date = LocalDateTime.now();
+    private LocalDate date;
     @ManyToOne
     @JoinColumn (name = "sender_id")
     private User sender;

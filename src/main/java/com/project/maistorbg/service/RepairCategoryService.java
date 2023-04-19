@@ -25,7 +25,7 @@ public class RepairCategoryService {
     public RepairCategory editRepairCategory(int repairCategoryId, RepairCategory repairCategory) {
         RepairCategory existingRepairCategory = repairCategoryRepository.findById(repairCategoryId)
                 .orElseThrow(() -> new NotFoundException("Repair category not found!"));
-        existingRepairCategory.setNameRepair(repairCategory.getNameRepair());
+        existingRepairCategory.setName(repairCategory.getName());
         return repairCategoryRepository.save(existingRepairCategory);
     }
 

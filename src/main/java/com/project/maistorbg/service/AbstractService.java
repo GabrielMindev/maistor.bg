@@ -22,8 +22,5 @@ public abstract class AbstractService {
     @Autowired
     protected ModelMapper mapper;
 
-
-
-
 }
 

@@ -52,6 +52,6 @@ public class RepairCategoryController {
     @DeleteMapping("/categories/{repairCategoryId}")
     public ResponseEntity<Void> deleteCategory(@PathVariable int repairCategoryId) {
         repairCategoryService.deleteRepairCategory(repairCategoryId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

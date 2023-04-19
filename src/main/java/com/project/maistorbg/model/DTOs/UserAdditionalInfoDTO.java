@@ -1,6 +1,7 @@
 package com.project.maistorbg.model.DTOs;
 
 import com.project.maistorbg.model.DTOs.CommentDTOs.CommentSimpleDTO;
+import com.project.maistorbg.model.entities.RepairCategory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,5 +14,6 @@ import java.util.List;
 public class UserAdditionalInfoDTO extends UserSimpleDTO {
     private List<PostSimpleDTO> posts;
     private List<CommentSimpleDTO> comments;
+    private List<RepairCategory> categories;
 
 }

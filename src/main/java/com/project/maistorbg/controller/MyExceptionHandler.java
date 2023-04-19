@@ -33,7 +33,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
     public ErrorDTO handleNotFound(Exception e){
       return generateErrorDTO(e, HttpStatus.NOT_FOUND);
     }
-    
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDTO handleAllOthers(Exception e){
