@@ -32,16 +32,13 @@ public class UserController extends AbstractController {
         return userService.register(registerDTO);
     }
 
-
     @PostMapping("/users/login")
     public UserAdditionalInfoDTO login(@RequestBody UserLoginDTO dto, HttpSession s) {
         UserAdditionalInfoDTO respDto = userService.login(dto);
         s.setAttribute("LOGGED", true);
         s.setAttribute("LOGGED_ID", respDto.getId());
         return respDto;
-
     }
-
 
     @PostMapping("/users/logout")
     public String logout(HttpSession session) {
@@ -61,7 +58,7 @@ public class UserController extends AbstractController {
 
     @GetMapping("users/categories/{categoryName}")
     public List<UserWithoutPasswordDTO> getByCategory(@PathVariable CategoryWithNameDTO categoryName) {
-        return userService.getAllWorkmenForCategory(categoryName.getCategoryName());
+        return userService.getAllWorkmenForCategory(categoryName.getNameRepair());
     }
 
     @PutMapping("users")
@@ -89,7 +86,7 @@ public class UserController extends AbstractController {
     public UserAdditionalInfoDTO addCategory(@RequestBody CategoryWithNameDTO categoryName, HttpServletRequest request){
         HttpSession session = request.getSession();
         if (session != null && session.getAttribute("LOGGED") != null) {
-            return userService.addCategory((Integer) request.getSession().getAttribute("LOGGED_ID"), categoryName.getCategoryName());
+            return userService.addCategory((Integer) request.getSession().getAttribute("LOGGED_ID"), categoryName.getNameRepair());
         } else {
             throw new UnauthorizedException("You have to login!");
         }

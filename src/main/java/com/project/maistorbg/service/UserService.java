@@ -9,6 +9,7 @@ import com.project.maistorbg.model.entities.User;
 import com.project.maistorbg.model.exceptions.BadRequestException;
 import com.project.maistorbg.model.exceptions.NotFoundException;
 import com.project.maistorbg.model.exceptions.UnauthorizedException;
+import com.project.maistorbg.model.repositories.RepairCategoryRepository;
 import com.project.maistorbg.util.UtilityUser;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +95,7 @@ public class UserService extends AbstractService{
     }
 
     public List<UserWithoutPasswordDTO> getAllWorkmenForCategory(String categoryName) {
-        RepairCategory category = categoryRepository.findByName(categoryName).orElseThrow(()-> new NotFoundException("Category not found"));
+        RepairCategory category = repairCategoryRepository.findByName(categoryName).orElseThrow(()-> new NotFoundException("Category not found"));
         return userRepository.getAllByCategoriesContaining(category)
                 .stream()
                 .map(user -> mapper.map(user,UserWithoutPasswordDTO.class))
@@ -139,7 +140,7 @@ public class UserService extends AbstractService{
     @Transactional
     public UserAdditionalInfoDTO addCategory(int id, String categoryName) {
         User user = userRepository.findById(id).orElseThrow(()-> new BadRequestException("User not found"));
-        RepairCategory category = categoryRepository.findByName(categoryName).orElseThrow(()-> new BadRequestException("Category not found"));
+        RepairCategory category = repairCategoryRepository.findByName(categoryName).orElseThrow(()-> new BadRequestException("Category not found"));
         if (!user.getRoleName().equals("workman")){
             throw new BadRequestException("User isn't a workman");
         }
@@ -149,7 +150,7 @@ public class UserService extends AbstractService{
         user.getCategories().add(category);
         user = userRepository.save(user);
         category.getUsers().add(user);
-        categoryRepository.save(category);
+        repairCategoryRepository.save(category);
         return  mapper.map(user, UserAdditionalInfoDTO.class);
     }
 
