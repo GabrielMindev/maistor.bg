@@ -1,6 +1,6 @@
 package com.project.maistorbg.model.DTOs.CommentDTOs;
 
-import com.project.maistorbg.model.DTOs.UserWithoutPasswordDTO;
+import com.project.maistorbg.model.DTOs.UserDTOs.UserWithoutPasswordDTO;
 
 public class CommentWithoutSenderDTO {
     private int id;

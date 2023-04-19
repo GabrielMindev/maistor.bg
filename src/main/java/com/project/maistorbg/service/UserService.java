@@ -1,20 +1,20 @@
 package com.project.maistorbg.service;
 
-import com.project.maistorbg.model.DTOs.*;
+import com.project.maistorbg.model.DTOs.RateDTO;
+import com.project.maistorbg.model.DTOs.RateResponseDTO;
+import com.project.maistorbg.model.DTOs.UserDTOs.*;
+import com.project.maistorbg.model.entities.Rating;
 import com.project.maistorbg.model.entities.RepairCategory;
 import com.project.maistorbg.model.entities.User;
 import com.project.maistorbg.model.exceptions.BadRequestException;
 import com.project.maistorbg.model.exceptions.NotFoundException;
 import com.project.maistorbg.model.exceptions.UnauthorizedException;
 import com.project.maistorbg.util.UtilityUser;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -74,7 +74,7 @@ public class UserService extends AbstractService{
             throw new UnauthorizedException("Wrong credentials");
         }
         if(!encoder.matches(dto.getPassword(), u.get().getPassword())){
-            throw new UnauthorizedException("Wrong credentials");
+            throw new UnauthorizedException("Wrong credentials!");
         }
         return mapper.map(u, UserAdditionalInfoDTO.class);
     }
@@ -86,7 +86,6 @@ public class UserService extends AbstractService{
         }
         throw new NotFoundException("User not found");
     }
-
 
     public List<UserAdditionalInfoDTO> getAllUsers() {
         return userRepository.findAll().stream()
@@ -152,5 +151,28 @@ public class UserService extends AbstractService{
         category.getUsers().add(user);
         categoryRepository.save(category);
         return  mapper.map(user, UserAdditionalInfoDTO.class);
+    }
+
+    public RateResponseDTO createRate(int raterId, int ratedId, RateDTO rating) {
+        if (rating.getRating() > 5 || rating.getRating() < 0){
+            throw new BadRequestException("Bad value for rate");
+        }
+        if (ratingRepository.findByUserIdAndRatedWorkmanId(raterId,ratedId).isPresent()){
+            throw new BadRequestException("This user already rated this workman");
+        }
+        User rater = userRepository.findById(raterId).orElseThrow(()->new BadRequestException("Rater not found"));
+        User rated = userRepository.findById(ratedId).orElseThrow(()->new BadRequestException("Rated user not found"));
+        if (!rated.getRoleName().equals("workman")){
+            throw new BadRequestException("Only workmans can be rated");
+        }
+        if (raterId == ratedId){
+            throw new BadRequestException("User can't rate himself");
+        }
+        Rating rate=new Rating();
+        rate.setRating(rating.getRating());
+        rate.setRatedWorkman(rated);
+        rate.setUser(rater);
+        rate = ratingRepository.save(rate);
+        return mapper.map(rate,RateResponseDTO.class);
     }
 }

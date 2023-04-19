@@ -1,4 +1,4 @@
-package com.project.maistorbg.model.DTOs;
+package com.project.maistorbg.model.DTOs.UserDTOs;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,5 +12,5 @@ public class UserSimpleDTO {
     private int id;
     private String email;
     private int age;
-    private String profileImageUrl;
+    private String profilePhoto;
 }

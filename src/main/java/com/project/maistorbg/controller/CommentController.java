@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public class CommentController extends MyExceptionHandler{
+public class CommentController extends AbstractController{
     @Autowired
     CommentService commentService;
 
