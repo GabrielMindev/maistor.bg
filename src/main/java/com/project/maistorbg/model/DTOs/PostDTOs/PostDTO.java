@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
     @Component
     public class PostDTO {
 
-        private String categoryName;
+        private String repairCategory;
         private String description;
         private String cityName;
 

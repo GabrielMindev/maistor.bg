@@ -64,7 +64,6 @@ public class UserController extends MyExceptionHandler {
         }
     }
 
-
     @DeleteMapping("/users")
     public void deleteProfile(HttpServletRequest request) {
         HttpSession session = request.getSession();

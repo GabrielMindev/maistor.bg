@@ -27,11 +27,9 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "repair_category_id")
     private RepairCategory repairCategory;
-    @ManyToOne
-    @JoinColumn(name = "city_id")
-    private City city;
-    @Column
-    private Boolean isActive;
+
+    private String city;
+
 
 
 

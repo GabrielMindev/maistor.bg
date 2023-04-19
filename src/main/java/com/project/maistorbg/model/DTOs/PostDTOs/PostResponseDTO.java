@@ -2,6 +2,7 @@ package com.project.maistorbg.model.DTOs.PostDTOs;
 
 
 import com.project.maistorbg.model.DTOs.UserWithoutPasswordDTO;
+import com.project.maistorbg.model.entities.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,17 @@ public class PostResponseDTO {
     private String cityName;
     private UserWithoutPasswordDTO owner;
     private LocalDate publication_date;
+
+    public PostResponseDTO(Post post) {
+
+    }
+
+    public PostResponseDTO(PostResponseDTO post) {
+
+    }
+
+    //  public PostResponseDTO(PostResponseDTO post) {
+  //  }
     //private Boolean isActive;
 
 }
