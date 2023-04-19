@@ -1,6 +1,7 @@
 package com.project.maistorbg.model.DTOs.PostDTOs;
 
 
+import com.project.maistorbg.model.entities.RepairCategory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,9 +15,9 @@ import org.springframework.stereotype.Component;
     @Component
     public class PostDTO {
 
-        private String repairCategory;
+        private String name;
         private String description;
-        private String cityName;
+        private String city;
 
 
 }

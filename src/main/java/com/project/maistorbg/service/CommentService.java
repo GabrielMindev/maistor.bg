@@ -10,7 +10,7 @@ import com.project.maistorbg.model.exceptions.UnauthorizedException;
 import org.springframework.stereotype.Service;
 
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,12 +24,16 @@ public class CommentService extends AbstractService{
                 .collect(Collectors.toList());
     }
 
-    public CommentInfoDTO add(AddCommentDTO dto, int senderId) {
+    public CommentInfoDTO add(AddCommentDTO dto, int senderId, int receiverId) {
+        User sender = userRepository.findById(senderId).orElseThrow(() -> new NotFoundException("User not found!"));
+        userRepository.findById(receiverId).orElseThrow(() -> new NotFoundException("User not found!"));
         Comment comment = mapper.map(dto, Comment.class);
-        User user = userRepository.findById(senderId).orElseThrow(() -> new NotFoundException("User not found!"));
-        comment.setSender(user);
-        commentRepository.save(comment);
-        return mapper.map(comment, CommentInfoDTO.class);
+        comment.setSender(sender);
+        comment.setDate(LocalDate.now());
+        Comment savedComment = commentRepository.save(comment);
+        CommentInfoDTO commentInfoDTO = mapper.map(savedComment, CommentInfoDTO.class);
+        commentInfoDTO.setId(savedComment.getId());
+        return commentInfoDTO;
     }
 
     public CommentInfoDTO edit(int commentId, EditCommentDTO dto, int senderId) {
@@ -39,9 +43,7 @@ public class CommentService extends AbstractService{
             throw new UnauthorizedException("You are not authorized to edit this comment.");
         }
         comment.setText(dto.getText());
-        comment.setDate(LocalDateTime.now());
-        comment.setReceiver(userRepository.findById(dto.getReceiverId())
-                .orElseThrow(() -> new NotFoundException("The resource has not been found!")));
+        comment.setDate(LocalDate.now());
         Comment updatedComment = commentRepository.save(comment);
         return mapper.map(updatedComment, CommentInfoDTO.class);
     }

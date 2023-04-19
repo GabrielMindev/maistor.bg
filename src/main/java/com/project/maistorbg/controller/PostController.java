@@ -3,7 +3,9 @@ package com.project.maistorbg.controller;
 import com.project.maistorbg.model.DTOs.PostDTOs.PostDTO;
 import com.project.maistorbg.model.DTOs.PostDTOs.PostForApplicationResponseDTO;
 import com.project.maistorbg.model.DTOs.PostDTOs.PostResponseDTO;
+import com.project.maistorbg.model.entities.Application;
 import com.project.maistorbg.model.entities.Post;
+import com.project.maistorbg.model.exceptions.NotFoundException;
 import com.project.maistorbg.model.repositories.ApplicationRepository;
 
 import com.project.maistorbg.model.repositories.PostRepository;
@@ -22,7 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-public class PostController extends MyExceptionHandler {
+public class PostController extends AbstractController {
 
     @Autowired
     PostService postService;
@@ -31,72 +33,50 @@ public class PostController extends MyExceptionHandler {
     @Autowired
     PostRepository postRepository;
 //    @Autowired
+//    private PostResponseDTO postResponseDTO;
+//    @Autowired
 //    CityRepository cityRepository;
     @Autowired
     ApplicationRepository applicationRepository;
 
-    private final HttpServletRequest request;
 
-    public PostController(PostService postService, HttpServletRequest request) {
-        this.postService = postService;
-        this.request = request;
-    }
+
+//    public PostController(PostService postService, HttpServletRequest request) {
+//        this.postService = postService;
+//        this.request = request;
+//    }
 
     @PostMapping("/posts")
-    public ResponseEntity<PostResponseDTO> addPost(@RequestBody PostDTO postDTO) {
+    public ResponseEntity<PostResponseDTO> addPost(HttpServletRequest request,@RequestBody PostDTO postDTO) {
         Integer userId = (Integer) request.getSession().getAttribute("LOGGED_ID");
         // code to create a post
         PostResponseDTO post = postService.addPost(userId, postDTO); // assuming this method returns the created post
-        PostResponseDTO postResponseDTO = new PostResponseDTO(post); // todo трябваше да направя конструктор?
-        return ResponseEntity.ok(postResponseDTO);
+        //PostResponseDTO postResponseDTO = new PostResponseDTO(post); // todo трябваше да направя конструктор?
+        return ResponseEntity.ok(post);
+        //return ResponseEntity.ok(postService.addPost((Integer) request.getSession().getAttribute("LOGGED"),postDTO));
     }
 
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable int postId) {
-        postRepository.deleteById(postId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<PostResponseDTO> deletePost(@PathVariable int postId,HttpServletRequest request) {
+        Integer userId = (Integer) request.getSession().getAttribute("LOGGED_ID");
+        PostResponseDTO post = postService.deletePost(postId,userId);
+        return ResponseEntity.ok(postService.deletePost(postId, (Integer) request.getSession().getAttribute("LOGGED_ID")));
+
     }
 
 
     @PutMapping("/posts/{id}")
-    public ResponseEntity<PostResponseDTO> editPost(@PathVariable("id") int id, @RequestBody PostDTO postDTO) {
-        Optional<Post> optionalPost = postRepository.findById(id);
-        if (!optionalPost.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        Post post = optionalPost.get();
-        if (post.getOwner().getId() != (int) request.getSession().getAttribute("USER_ID")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        post.setDescription(postDTO.getDescription());
-        //post.setCity(postDTO.getCityName());
-        postRepository.save(post);
-        PostResponseDTO postResponseDTO = new PostResponseDTO(post); //// todo трябваше да направя конструктор?
-        return ResponseEntity.ok(postResponseDTO);
+    public ResponseEntity<PostResponseDTO> editPost(@PathVariable int id, @RequestBody PostDTO postDTO,HttpServletRequest request) {
+        Integer userId = (Integer) request.getSession().getAttribute("LOGGED_ID");
+        // code to create a post
+        PostResponseDTO post = postService.editPost(postDTO, id,userId); // assuming this method returns the created post
+        //PostResponseDTO postResponseDTO = new PostResponseDTO(post); // todo трябваше да направя конструктор?
+        return ResponseEntity.ok(post);
     }
 
 
-  /*  @PostMapping("/posts/{postId}/applications/{applicationId}/accept")
-    public ResponseEntity<PostResponseDTO> acceptApplication(@PathVariable("postId") int postId, @PathVariable("applicationId") int applicationId) {
-        Optional<Post> optionalPost = postRepository.findById(postId);
-        if (optionalPost.isPresent()) {
-            Post post = optionalPost.get();
-            Optional<Application> optionalApplication = post.getApplications().stream().filter(a -> a.getId() == applicationId).findFirst();
-            if (optionalApplication.isPresent()) {
-                Application application = optionalApplication.get();
-                applicationRepository.save(application);
-                postRepository.save(post);
-                PostResponseDTO postResponseDTO = new PostResponseDTO(post);
-                return ResponseEntity.ok(postResponseDTO);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }  */
 
-    @GetMapping("/posts/{id}")
+    @GetMapping("users/{id}/posts")
     public ResponseEntity<List<PostResponseDTO>> getPostsForUser(@PathVariable int id, HttpServletRequest request) {
         List<Post> posts = postService.getAllPostForUser(id);
         List<PostResponseDTO> dto = mapper.map(posts, new TypeToken<List<PostResponseDTO>>() {
@@ -104,17 +84,32 @@ public class PostController extends MyExceptionHandler {
         return ResponseEntity.ok(dto);
     }
 
-  /*  @GetMapping("/posts/{categoryName}")
-    public PageImpl<PostForApplicationResponseDTO> getPostsForCategory(@PathVariable String categoryName, @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy, HttpServletRequest request) {
-        return postService.getPostsForCategory(categoryName, page, sortBy);
-    } */
+//    @GetMapping("/posts/{categoryName}")
+//    public PageImpl<PostForApplicationResponseDTO> getPostsForCategory(@PathVariable String categoryName, @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy, HttpServletRequest request) {
+//        return postService.getPostsForCategory(categoryName, page, sortBy);
+//    }
 
-    @GetMapping("/posts/city/{cityName}")
-    public ResponseEntity<List<PostResponseDTO>> getAllByCity(@PathVariable String cityName) {
-        List<Post> posts = postRepository.findAllByCity(cityName);
-        List<PostResponseDTO> postResponseDTOs = posts.stream()
-                .map(PostResponseDTO::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(postResponseDTOs);
+//    @GetMapping("/posts/city/{cityName}")
+//    public ResponseEntity<List<PostResponseDTO>> getAllByCity(@PathVariable String cityName) {
+//        List<Post> posts = postRepository.findAllByCityName(cityName);
+//        List<PostResponseDTO> postResponseDTOs = posts.stream()
+//                .map(PostResponseDTO::new)
+//                .collect(Collectors.toList());
+//        return ResponseEntity.ok(postResponseDTOs);
+//    }
+
+    @GetMapping("/posts/all")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<PostResponseDTO> getAll(){
+        return postService.getAll();
     }
+
+//    @GetMapping("/posts/{cityName}")
+//    public ResponseEntity<List<PostResponseDTO>> getAllByCity(@PathVariable String cityName) {
+//        List<Post> posts = postRepository.findAllByCityName(cityName);
+//        List<PostResponseDTO> postResponseDTOs = posts.stream()
+//                .map(postResponseDTO::create)
+//                .collect(Collectors.toList());
+//        return ResponseEntity.ok(postResponseDTOs);
+//    }
 }

@@ -17,15 +17,14 @@ public class Application {
     private int id;
     @Column
     private double price_per_service;
-    @Column
+    @Column(name= "days_needed")
     private int daysNeeded;
-    @ManyToOne(cascade ={ CascadeType.ALL}, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "post_id",nullable = false)
     private Post post;
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "application_workman_id")
     private User user;
-    @Column
-    private String status;
+    private int status;
 
 }

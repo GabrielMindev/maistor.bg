@@ -55,8 +55,8 @@ public class User {
     )
     private Set<RepairCategory> categories = new HashSet<>();
 // Doesn't compile because of missing classes
-//    @OneToMany
-//    @JoinColumn(name = "owner_id")
-//    private Set<Post> posts = new HashSet<>();
+    @OneToMany
+    @JoinColumn(name = "owner_id")
+    private Set<Post> posts = new HashSet<>();
 
 }

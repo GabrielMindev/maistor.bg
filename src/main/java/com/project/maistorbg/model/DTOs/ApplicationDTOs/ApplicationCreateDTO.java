@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApplicationCreateDTO {
-    private int postId; //TODO
+    private int postId;
     private double price_per_service;
     private int daysNeeded;
 

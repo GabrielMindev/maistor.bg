@@ -1,5 +1,6 @@
 package com.project.maistorbg.model.DTOs.CommentDTOs;
 
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AddCommentDTO {
 
+
+    private Integer receiverId;
+
     private String text;
-    private int receiverId;
+
+
 }

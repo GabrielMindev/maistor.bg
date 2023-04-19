@@ -1,7 +1,6 @@
 package com.project.maistorbg.util;
 
-import com.project.maistorbg.model.DTOs.UserEditDTO;
-import com.project.maistorbg.model.DTOs.UserRegisterDTO;
+import com.project.maistorbg.model.DTOs.UserDTOs.UserRegisterDTO;
 import com.project.maistorbg.model.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 

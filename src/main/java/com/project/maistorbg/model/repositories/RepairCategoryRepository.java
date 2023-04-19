@@ -6,7 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+
 @Repository
-public interface CategoryRepository extends JpaRepository<RepairCategory, Integer> {
-    Optional<RepairCategory> findByName(String categoryName);
+public interface RepairCategoryRepository extends JpaRepository <RepairCategory, Integer> {
+
+     Optional<RepairCategory> findByName(String categoryName);
 }

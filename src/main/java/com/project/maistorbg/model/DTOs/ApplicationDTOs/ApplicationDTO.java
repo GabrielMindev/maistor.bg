@@ -1,7 +1,7 @@
 package com.project.maistorbg.model.DTOs.ApplicationDTOs;
 
 import com.project.maistorbg.model.DTOs.PostDTOs.PostForApplicationResponseDTO;
-import com.project.maistorbg.model.DTOs.UserWithoutPasswordDTO;
+import com.project.maistorbg.model.DTOs.UserDTOs.UserWithoutPasswordDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
