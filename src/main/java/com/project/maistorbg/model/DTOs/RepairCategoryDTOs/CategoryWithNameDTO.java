@@ -1,4 +1,4 @@
-package com.project.maistorbg.model.DTOs;
+package com.project.maistorbg.model.DTOs.RepairCategoryDTOs;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

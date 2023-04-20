@@ -8,6 +8,5 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class AddRepairCategoryDTO {
-
         private String nameRepair;
 }

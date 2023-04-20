@@ -1,6 +1,8 @@
 package com.project.maistorbg.controller;
 
-import com.project.maistorbg.model.DTOs.*;
+import com.project.maistorbg.model.DTOs.RateDTOs.RateDTO;
+import com.project.maistorbg.model.DTOs.RateDTOs.RateResponseDTO;
+import com.project.maistorbg.model.DTOs.RepairCategoryDTOs.CategoryWithNameDTO;
 import com.project.maistorbg.model.DTOs.UserDTOs.*;
 import com.project.maistorbg.model.exceptions.UnauthorizedException;
 import com.project.maistorbg.service.MediaService;
@@ -109,7 +111,7 @@ public class UserController extends AbstractController {
     }
 
     @PostMapping("/users/rating")
-    public RateResponseDTO rate(@RequestParam(name = "ratedId") int ratedId,  @RequestBody RateDTO rating, HttpServletRequest request){
+    public RateResponseDTO rate(@RequestParam(name = "ratedId") int ratedId, @RequestBody RateDTO rating, HttpServletRequest request){
         HttpSession session = request.getSession();
         if (session != null && session.getAttribute("LOGGED") != null) {
             return userService.createRate((Integer) request.getSession().getAttribute("LOGGED_ID"),  ratedId,rating);

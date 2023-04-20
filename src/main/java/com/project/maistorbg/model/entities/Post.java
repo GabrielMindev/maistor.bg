@@ -25,7 +25,7 @@ public class Post {
     @Column
     private LocalDate publication_date;
     @ManyToOne
-    @JoinColumn(name = "repair_category_id")
+    @JoinColumn(name = "repair_categories_id")
     private RepairCategory repairCategory;
 
     private String city;

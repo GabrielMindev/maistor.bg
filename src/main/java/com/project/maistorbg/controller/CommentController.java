@@ -2,8 +2,6 @@ package com.project.maistorbg.controller;
 import com.project.maistorbg.model.DTOs.CommentDTOs.AddCommentDTO;
 import com.project.maistorbg.model.DTOs.CommentDTOs.CommentInfoDTO;
 import com.project.maistorbg.model.DTOs.CommentDTOs.EditCommentDTO;
-import com.project.maistorbg.model.DTOs.RepairCategoryDTOs.RepairCategoryInfoDTO;
-import com.project.maistorbg.model.entities.RepairCategory;
 import com.project.maistorbg.service.CommentService;
 import org.springframework.http.HttpStatus;
 import jakarta.servlet.http.HttpSession;

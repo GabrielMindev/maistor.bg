@@ -1,4 +1,4 @@
-package com.project.maistorbg.model.DTOs;
+package com.project.maistorbg.model.DTOs.RateDTOs;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

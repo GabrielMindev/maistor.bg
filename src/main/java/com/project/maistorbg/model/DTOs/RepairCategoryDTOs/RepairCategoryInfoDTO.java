@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 public class RepairCategoryInfoDTO {
-
     private int id;
     private String nameRepair;
     private LocalDate date = LocalDate.now();

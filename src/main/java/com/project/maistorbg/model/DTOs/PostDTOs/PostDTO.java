@@ -1,7 +1,5 @@
 package com.project.maistorbg.model.DTOs.PostDTOs;
 
-
-import com.project.maistorbg.model.entities.RepairCategory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

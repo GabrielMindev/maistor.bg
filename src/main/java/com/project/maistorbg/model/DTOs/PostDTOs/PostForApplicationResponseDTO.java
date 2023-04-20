@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class PostForApplicationResponseDTO {
     private int id;
     private String description;
-    private String cityName;
+    private String city;
     private UserWithoutPasswordDTO owner;
     private LocalDateTime publication_date;
 }

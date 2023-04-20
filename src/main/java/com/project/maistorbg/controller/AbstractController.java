@@ -36,13 +36,6 @@ public abstract class AbstractController {
         return generateErrorDTO(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-//    private ErrorDTO generateErrorDTO(Exception e, HttpStatus s) {
-//        return ErrorDTO.builder()
-//                .msg(e.getMessage())
-//                .time(LocalDateTime.now())
-//                .status(s.value())
-//                .build();
-//    }
     private ErrorDTO generateErrorDTO(Exception exception, HttpStatus status){
         ErrorDTO exceptionDTO = new ErrorDTO();
         exceptionDTO.setTime(LocalDateTime.now());

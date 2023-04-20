@@ -11,6 +11,5 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post,Integer> {
     void deleteById(int id);
     List<Post> findAllByOwner(User User);
-//    List<Post> findAllByCategory( category, Pageable pageable);
-    List<Post> findAllByCity(String cityName);
+
 }

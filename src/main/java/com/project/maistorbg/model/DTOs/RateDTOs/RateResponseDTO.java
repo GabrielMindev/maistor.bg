@@ -1,4 +1,4 @@
-package com.project.maistorbg.model.DTOs;
+package com.project.maistorbg.model.DTOs.RateDTOs;
 
 import com.project.maistorbg.model.DTOs.UserDTOs.UserWithoutPasswordDTO;
 import lombok.Getter;

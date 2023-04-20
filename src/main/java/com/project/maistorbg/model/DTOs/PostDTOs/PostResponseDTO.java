@@ -16,22 +16,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Component
 public class PostResponseDTO {
-
     private int id;
     private String description;
     private String city;
     private LocalDate publication_date;
-
-    public PostResponseDTO(Post post) {
-
-    }
-
-    public PostResponseDTO(PostResponseDTO post) {
-
-    }
-
-    //  public PostResponseDTO(PostResponseDTO post) {
-  //  }
-    //private Boolean isActive;
 
 }

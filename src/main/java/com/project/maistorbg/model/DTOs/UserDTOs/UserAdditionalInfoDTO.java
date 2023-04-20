@@ -1,10 +1,9 @@
 package com.project.maistorbg.model.DTOs.UserDTOs;
 
 import com.project.maistorbg.model.DTOs.CommentDTOs.CommentSimpleDTO;
-import com.project.maistorbg.model.DTOs.PostSimpleDTO;
+import com.project.maistorbg.model.DTOs.PostDTOs.PostSimpleDTO;
 import com.project.maistorbg.model.DTOs.RepairCategoryDTOs.AddRepairCategoryDTO;
 
-import com.project.maistorbg.model.entities.RepairCategory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

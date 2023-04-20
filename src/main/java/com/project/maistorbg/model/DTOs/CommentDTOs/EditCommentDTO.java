@@ -9,8 +9,5 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class EditCommentDTO {
-
-
     private String text;
-
 }

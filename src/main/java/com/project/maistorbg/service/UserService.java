@@ -1,7 +1,7 @@
 package com.project.maistorbg.service;
 
-import com.project.maistorbg.model.DTOs.RateDTO;
-import com.project.maistorbg.model.DTOs.RateResponseDTO;
+import com.project.maistorbg.model.DTOs.RateDTOs.RateDTO;
+import com.project.maistorbg.model.DTOs.RateDTOs.RateResponseDTO;
 import com.project.maistorbg.model.DTOs.UserDTOs.*;
 import com.project.maistorbg.model.entities.Rating;
 import com.project.maistorbg.model.entities.RepairCategory;
@@ -9,7 +9,6 @@ import com.project.maistorbg.model.entities.User;
 import com.project.maistorbg.model.exceptions.BadRequestException;
 import com.project.maistorbg.model.exceptions.NotFoundException;
 import com.project.maistorbg.model.exceptions.UnauthorizedException;
-import com.project.maistorbg.model.repositories.RepairCategoryRepository;
 import com.project.maistorbg.util.UtilityUser;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

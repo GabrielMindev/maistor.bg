@@ -36,17 +36,13 @@ public class PostService extends AbstractService {
     ModelMapper modelMapper;
     @Autowired
     RepairCategoryRepository categoryRepository;
-    //        @Autowired
-//        CityRepository cityRepository;
+
     @Autowired
     ApplicationRepository applicationRepository;
-    // @Autowired
-    // JdbcTemplate jdbcTemplate;
 
     public PostResponseDTO addPost(int id, PostDTO postDTO) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
         RepairCategory category = repairCategoryRepository.findByName(postDTO.getName()).orElseThrow(() -> new NotFoundException("Category not found"));
-        //City city = cityRepository.findByName(postDTO.getCityName()).orElseThrow(()-> new NotFoundException("City not found"));
         if (postDTO.getDescription() == null || postDTO.getDescription().isBlank() || postDTO.getDescription().isEmpty()) {
             throw new BadRequestException("Description is mandatory");
         }
@@ -70,19 +66,6 @@ public class PostService extends AbstractService {
         return modelMapper.map(post, PostResponseDTO.class);
     }
 
-    public PageImpl<PostForApplicationResponseDTO> getAllPosts(Optional<Integer> page, Optional<String> sortBy) {
-        List<PostForApplicationResponseDTO> dtos = postRepository.findAll(PageRequest.of(page.orElse(0), 5, Sort.Direction.DESC, sortBy.orElse("postedDate")))
-                .stream().map(post -> modelMapper.map(post, PostForApplicationResponseDTO.class)).collect(Collectors.toList());
-        return new PageImpl<>(dtos);
-    }
-
-//        public PageImpl<PostForApplicationResponseDTO> getPostsForCategory(String categoryName,Optional<Integer> page, Optional<String> sortBy){
-//
-//            List<PostForApplicationResponseDTO> dtos = postRepository.fi
-//                    .stream()
-//                    .map(post -> modelMapper.map(post,PostForApplicationResponseDTO.class)).collect(Collectors.toList());
-//            return new PageImpl<>(dtos);
-//        }
 
     public PostResponseDTO editPost(PostDTO postDTO, int id, int userId) {
         Post post = postRepository.findById(id).orElseThrow(() -> new NotFoundException("Post not found"));
@@ -98,23 +81,6 @@ public class PostService extends AbstractService {
         return modelMapper.map(post, PostResponseDTO.class);
     }
 
-    public PostResponseDTO acceptApplication(int postId, int applicationId, int userId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("Post not found"));
-        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new NotFoundException("Application not found"));
-        if (application.getPost() != post) {
-            throw new BadRequestException("This offer doesn't belong to this post");
-        }
-        if (post.getOwner().getId() != userId) {
-            throw new UnauthorizedException("User is not post owner");
-        }
-//            if (post.getAcceptedApplication() != null) {
-//                throw new BadRequestException("This post already has accepted offer");
-//            }
-//            post.setAcceptedApplicatin(application);
-        //post.setAssignedDate(LocalDate.now());
-        post = postRepository.save(post);
-        return modelMapper.map(post, PostResponseDTO.class);
-    }
 
     public List<Post> getAllPostForUser(int id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
