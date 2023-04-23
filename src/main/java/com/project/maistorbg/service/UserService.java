@@ -33,7 +33,6 @@ public class UserService extends AbstractService{
             registerDTO.setFirstName(first_name);
 
         }
-
         if (!registerDTO.getLastName().matches(UtilityUser.nameRegex)) {
             throw new BadRequestException("Invalid last name. You should use only letters.");
         } else {
@@ -41,8 +40,9 @@ public class UserService extends AbstractService{
             String last_name = registerDTO.getLastName().substring(0, 1).toUpperCase() + registerDTO.getLastName().substring(1);
             registerDTO.setLastName(last_name);
         }
-
-
+        if(registerDTO.getAge()<0){
+            throw new BadRequestException("Invalid age given!");
+        }
         if (!UtilityUser.isPasswordMatch(registerDTO)){
             throw new BadRequestException("Password mismatch");
         }
@@ -51,6 +51,9 @@ public class UserService extends AbstractService{
         }
         if (!UtilityUser.isEmailValid(registerDTO.getEmail())){
             throw new BadRequestException("Invalid email");
+        }
+        if(!UtilityUser.isValidRole(registerDTO.getRoleName())){
+            throw new BadRequestException("Invalid role name");
         }
         if (userRepository.existsByEmail(registerDTO.getEmail())){
             throw  new BadRequestException("User already exists");
@@ -112,20 +115,19 @@ public class UserService extends AbstractService{
             throw new BadRequestException("Invalid last name. You should use only letters.");
         }
         String phoneNumber = UtilityUser.validateAndRestyleNumber(dto.getPhoneNumber());
-        if (userRepository.findUserByPhoneNumber(phoneNumber).isPresent()){
-            throw new BadRequestException("User with the same phone number already exists!");
-        }
         if (!UtilityUser.isEmailValid(dto.getEmail())){
             throw new BadRequestException("Invalid email");
+        }
+        if(dto.getAge()<0){
+            throw new BadRequestException("Invalid age given!");
         }
 
         user.setUsername(dto.getUsername());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setAge(dto.getAge());
-        user.setRoleName(dto.getRoleName());
         user.setPhoneNumber(phoneNumber);
-        user.setProfilePhoto(dto.getProfilePhotoUrl());
+        user.setProfilePhoto(dto.getProfilePhoto());
         user.setEmail(dto.getEmail());
         user = userRepository.save(user);
         return mapper.map(user,UserEditDTO.class);
@@ -138,13 +140,13 @@ public class UserService extends AbstractService{
 
     @Transactional
     public UserAdditionalInfoDTO addCategory(int id, String categoryName) {
-        User user = userRepository.findById(id).orElseThrow(()-> new BadRequestException("User not found"));
+        User user = userRepository.findById(id).orElseThrow(()-> new NotFoundException("User not found"));
         RepairCategory category = repairCategoryRepository.findByName(categoryName).orElseThrow(()-> new BadRequestException("Category not found"));
         if (!user.getRoleName().equals("workman")){
-            throw new BadRequestException("User isn't a workman");
+            throw new UnauthorizedException("User isn't a workman");
         }
         if (user.getCategories().contains(category)){
-            throw new BadRequestException("User already have this category");
+            throw new BadRequestException("User already has this category");
         }
         user.getCategories().add(category);
         user = userRepository.save(user);
@@ -154,16 +156,16 @@ public class UserService extends AbstractService{
     }
 
     public RateResponseDTO createRate(int raterId, int ratedId, RateDTO rating) {
-        if (rating.getRating() > 5 || rating.getRating() < 0){
-            throw new BadRequestException("Bad value for rate");
+        if (rating.getRating() > 10 || rating.getRating() < 0){
+            throw new BadRequestException("Unsupported rating value");
         }
         if (ratingRepository.findByUserIdAndRatedWorkmanId(raterId,ratedId).isPresent()){
             throw new BadRequestException("This user already rated this workman");
         }
-        User rater = userRepository.findById(raterId).orElseThrow(()->new BadRequestException("Rater not found"));
-        User rated = userRepository.findById(ratedId).orElseThrow(()->new BadRequestException("Rated user not found"));
+        User rater = userRepository.findById(raterId).orElseThrow(()->new UnauthorizedException("Rater not found"));
+        User rated = userRepository.findById(ratedId).orElseThrow(()->new UnauthorizedException("Rated user not found"));
         if (!rated.getRoleName().equals("workman")){
-            throw new BadRequestException("Only workmans can be rated");
+            throw new BadRequestException("Only workmen can be rated");
         }
         if (raterId == ratedId){
             throw new BadRequestException("User can't rate himself");

@@ -14,27 +14,21 @@ import com.project.maistorbg.model.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
-public class ApplicationService extends AbstractService{
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    PostRepository postRepository;
-    @Autowired
-    ModelMapper modelMapper;
-    @Autowired
-    ApplicationRepository applicationRepository;
+public class ApplicationService extends AbstractService {
 
-    public List<ApplicationDTO> getAllApplicationPerPost(int postId, int userId){
-        Post post = postRepository.findById(postId).orElseThrow(()-> new NotFoundException("Post not found"));
-        if (post.getOwner().getId() != userId){
+
+    public List<ApplicationDTO> getAllApplicationPerPost(int postId, int userId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("Post not found"));
+        if (post.getOwner().getId() != userId) {
             throw new UnauthorizedException("User is not post owner");
         }
-        return applicationRepository.findAllByPost(post).stream().map(post2 -> modelMapper.map(post2,ApplicationDTO.class)).collect(Collectors.toList());
+        return applicationRepository.findAllByPost(post).stream().map(post2 -> mapper.map(post2, ApplicationDTO.class)).collect(Collectors.toList());
     }
 
     public ApplicationDTO addApplication(ApplicationCreateDTO createApplication, int id) {
@@ -42,47 +36,61 @@ public class ApplicationService extends AbstractService{
         Post post = postRepository.findById(createApplication.getPostId()).orElseThrow(() -> new BadRequestException("Post not found"));
         User user = userRepository.findById(id).orElseThrow(() -> new BadRequestException("User not found"));
 
-         if (!user.getRoleName().equals("workman")){
+        if (!user.getRoleName().equals("workman")) {
             throw new BadRequestException("User is not workman");
-         }
-        if (post.getOwner() == user) {
+        }
+        if (post.getOwner().getId() == (user.getId())) {
             throw new BadRequestException("User is post owner");
         }
+
+        boolean exists = applicationRepository.existsByPostIdAndUserId(post.getId(), id);
+        if (exists){
+            throw new BadRequestException("application already exists for this user");
+        }
+
+        if (createApplication.getPrice_per_service() <= 0 || createApplication.getDaysNeeded() <= 0) {
+            throw new BadRequestException("Invalid price or invalid given days");
+        }
+
         Application application = new Application();
         application.setDaysNeeded(createApplication.getDaysNeeded());
         application.setPrice_per_service(createApplication.getPrice_per_service());
         application.setPost(post);
         application.setUser(user);
+
         application = applicationRepository.save(application);
-        return modelMapper.map(application, ApplicationDTO.class);
+        return mapper.map(application, ApplicationDTO.class);
+
+
     }
 
-    public ApplicationDTO editApplication(ApplicationDTO offerEditDTO, int id){
-        Application application = applicationRepository.findById(offerEditDTO.getId()).orElseThrow(()-> new NotFoundException("Application not found"));
-        User user = userRepository.findById(id).orElseThrow(()-> new NotFoundException("User not found"));
-        if (application.getUser() != user){
-            throw new UnauthorizedException("User isn't offer owner");
+    public ApplicationDTO editApplication(ApplicationDTO applicationDTO, int id) {
+        Application application = applicationRepository.findById(applicationDTO.getId()).orElseThrow(() -> new NotFoundException("Application not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
+        if (application.getUser().getId() != user.getId()) {
+            throw new UnauthorizedException("User isn't application owner");
         }
-        if (application.getPrice_per_service()<0){
-            throw new BadRequestException("Invalid price");
+        if (application.getPrice_per_service() <= 0 || application.getDaysNeeded() <= 0) {
+            throw new BadRequestException("Invalid price or invalid given days");
         }
-        application.setDaysNeeded(offerEditDTO.getDaysNeeded());
-        application.setPrice_per_service(offerEditDTO.getPrice_per_service());
-        application.setDaysNeeded(offerEditDTO.getDaysNeeded());
+        application.setDaysNeeded(applicationDTO.getDaysNeeded());
+        application.setPrice_per_service(applicationDTO.getPrice_per_service());
+        application.setDaysNeeded(applicationDTO.getDaysNeeded());
         application = applicationRepository.save(application);
-        return modelMapper.map(application,ApplicationDTO.class);
+        return mapper.map(application, ApplicationDTO.class);
 
     }
-    public ApplicationDTO deleteById(int applicationId,int userId){
-        Application application = applicationRepository.findById(applicationId).orElseThrow(()->new NotFoundException("Application not found"));
 
-        User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundException("User not found"));
-        if (application.getUser() != user){
-            throw new UnauthorizedException("User is not offer owner");
+    public ApplicationDTO deleteById(int applicationId, int userId) {
+        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new NotFoundException("Application not found"));
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+        if (application.getUser().getId() != user.getId()) {
+            throw new UnauthorizedException("User is not application owner");
         }
 
         applicationRepository.deleteById(applicationId);
-        return modelMapper.map(application,ApplicationDTO.class);
+        return mapper.map(application, ApplicationDTO.class);
     }
 
 }

@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @Component
 @Getter
@@ -19,5 +20,5 @@ public class PostForApplicationResponseDTO {
     private String description;
     private String city;
     private UserWithoutPasswordDTO owner;
-    private LocalDateTime publication_date;
+    private LocalDate publication_date;
 }

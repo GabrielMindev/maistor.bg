@@ -27,11 +27,5 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "repair_categories_id")
     private RepairCategory repairCategory;
-
     private String city;
-
-
-
-
-
 }

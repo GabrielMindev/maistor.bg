@@ -8,14 +8,18 @@ import com.project.maistorbg.model.repositories.ApplicationRepository;
 import com.project.maistorbg.model.repositories.PostRepository;
 import com.project.maistorbg.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -31,46 +35,38 @@ public class PostController extends AbstractController {
     ApplicationRepository applicationRepository;
 
 
-
-
     @PostMapping("/posts")
-    public ResponseEntity<PostResponseDTO> addPost(HttpServletRequest request,@RequestBody PostDTO postDTO) {
-        Integer userId = (Integer) request.getSession().getAttribute("LOGGED_ID");
+    public ResponseEntity<PostResponseDTO> addPost(HttpSession s, @RequestBody PostDTO postDTO) {
+        int userId = (int) s.getAttribute("LOGGED_ID");
         PostResponseDTO post = postService.addPost(userId, postDTO);
         return ResponseEntity.ok(post);
     }
 
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<PostResponseDTO> deletePost(@PathVariable int postId,HttpServletRequest request) {
-        Integer userId = (Integer) request.getSession().getAttribute("LOGGED_ID");
-        PostResponseDTO post = postService.deletePost(postId,userId);
-        return ResponseEntity.ok(postService.deletePost(postId, (Integer) request.getSession().getAttribute("LOGGED_ID")));
-
+    public ResponseEntity<PostResponseDTO> deletePost(@PathVariable int postId, HttpSession s) {
+        return ResponseEntity.ok(postService.deletePost(postId, (int) s.getAttribute("LOGGED_ID")));
     }
 
 
     @PutMapping("/posts/{id}")
-    public ResponseEntity<PostResponseDTO> editPost(@PathVariable int id, @RequestBody PostDTO postDTO,HttpServletRequest request) {
-        Integer userId = (Integer) request.getSession().getAttribute("LOGGED_ID");
-        PostResponseDTO post = postService.editPost(postDTO, id,userId);
+    public ResponseEntity<PostResponseDTO> editPost(@PathVariable int id, @RequestBody PostDTO postDTO, HttpSession s) {
+        int userId = (int) s.getAttribute("LOGGED_ID");
+        PostResponseDTO post = postService.editPost(postDTO, id, userId);
         return ResponseEntity.ok(post);
     }
 
 
-
-    @GetMapping("users/{id}/posts")
-    public ResponseEntity<List<PostResponseDTO>> getPostsForUser(@PathVariable int id, HttpServletRequest request) {
-        List<Post> posts = postService.getAllPostForUser(id);
-        List<PostResponseDTO> dto = mapper.map(posts, new TypeToken<List<PostResponseDTO>>() {
-        }.getType());
+    @GetMapping("/posts/user/{id}")
+    public ResponseEntity<Page<PostResponseDTO>> getPostsForUser(@PathVariable int id, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size) {
+        Page<PostResponseDTO> dto = postService.getAllPostForUser(id, page, size);
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("/posts/all")
+
+    @GetMapping("/posts")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<PostResponseDTO> getAll(){
-        return postService.getAll();
+    public ResponseEntity<Page<PostResponseDTO>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size) {
+        Page<PostResponseDTO> dto = postService.getAll(page, size);
+        return ResponseEntity.ok(dto);
     }
-
-
 }

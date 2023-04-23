@@ -21,5 +21,4 @@ public class ApplicationDTO {
     private int daysNeeded;
     private PostForApplicationResponseDTO post;
     private UserWithoutPasswordDTO user;
-
 }

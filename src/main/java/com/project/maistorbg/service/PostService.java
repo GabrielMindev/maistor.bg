@@ -15,9 +15,7 @@ import com.project.maistorbg.model.exceptions.UnauthorizedException;
 import com.project.maistorbg.model.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,23 +26,17 @@ import java.util.stream.Collectors;
 @Service
 public class PostService extends AbstractService {
 
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    PostRepository postRepository;
-    @Autowired
-    ModelMapper modelMapper;
-    @Autowired
-    RepairCategoryRepository categoryRepository;
-
-    @Autowired
-    ApplicationRepository applicationRepository;
-
     public PostResponseDTO addPost(int id, PostDTO postDTO) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
         RepairCategory category = repairCategoryRepository.findByName(postDTO.getName()).orElseThrow(() -> new NotFoundException("Category not found"));
-        if (postDTO.getDescription() == null || postDTO.getDescription().isBlank() || postDTO.getDescription().isEmpty()) {
+        if (postDTO.getDescription() == null || postDTO.getDescription().isBlank()) {
             throw new BadRequestException("Description is mandatory");
+        }
+        if (postDTO.getCity() == null || postDTO.getCity().isBlank()) {
+            throw new BadRequestException("City is mandatory");
+        }
+        if (postDTO.getName() == null || postDTO.getName().isBlank()) {
+            throw new BadRequestException("Category name is mandatory");
         }
         Post post = new Post();
         post.setOwner(user);
@@ -54,7 +46,7 @@ public class PostService extends AbstractService {
         post.setRepairCategory(category);
 
         post = postRepository.save(post);
-        return modelMapper.map(post, PostResponseDTO.class);
+        return mapper.map(post, PostResponseDTO.class);
     }
 
     public PostResponseDTO deletePost(int id, int userId) {
@@ -63,36 +55,51 @@ public class PostService extends AbstractService {
             throw new BadRequestException("User isn't post owner");
         }
         postRepository.deleteById(id);
-        return modelMapper.map(post, PostResponseDTO.class);
+        return mapper.map(post, PostResponseDTO.class);
     }
 
 
     public PostResponseDTO editPost(PostDTO postDTO, int id, int userId) {
         Post post = postRepository.findById(id).orElseThrow(() -> new NotFoundException("Post not found"));
+        RepairCategory category = repairCategoryRepository.findByName(postDTO.getName()).orElseThrow(() -> new NotFoundException("Category not found"));
         if (postDTO.getDescription() == null || postDTO.getDescription().isEmpty() || postDTO.getDescription().isBlank()) {
             throw new BadRequestException("Description is mandatory");
         }
+        if (postDTO.getCity() == null || postDTO.getCity().isBlank()) {
+            throw new BadRequestException("City is mandatory");
+        }
+        if (postDTO.getName() == null || postDTO.getName().isBlank()) {
+            throw new BadRequestException("Category name is mandatory");
+        }
+
         if (userId != post.getOwner().getId()) {
             throw new UnauthorizedException("User isn't post owner");
         }
         post.setDescription(postDTO.getDescription());
         post.setCity(postDTO.getCity());
+        post.setRepairCategory(category);
         post = postRepository.save(post);
-        return modelMapper.map(post, PostResponseDTO.class);
+        return mapper.map(post, PostResponseDTO.class);
     }
 
 
-    public List<Post> getAllPostForUser(int id) {
+    public Page<PostResponseDTO> getAllPostForUser(int id, int page, int size) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
-        return postRepository.findAllByOwner(user);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> posts =  postRepository.findAllByOwner(pageable, user);
+
+        return posts.map(post -> mapper.map(post, PostResponseDTO.class));
     }
 
-    public List<PostResponseDTO> getAll() {
-        List<Post> posts = postRepository.findAll();
-        List<PostResponseDTO> responseOfferDTOList = posts.stream()
-                .map(e -> modelMapper.map(e, PostResponseDTO.class)).collect(Collectors.toList());
-        return responseOfferDTOList;
+
+    public Page<PostResponseDTO> getAll(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Post> posts = postRepository.findAll(pageable);
+        return posts.map(post -> mapper.map(post, PostResponseDTO.class));
     }
+
 
 
 }

@@ -53,7 +53,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "workman_repair_category_id")
     )
     private Set<RepairCategory> categories = new HashSet<>();
-// Doesn't compile because of missing classes
     @OneToMany
     @JoinColumn(name = "owner_id")
     private Set<Post> posts = new HashSet<>();

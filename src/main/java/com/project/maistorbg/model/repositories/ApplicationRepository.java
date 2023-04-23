@@ -15,5 +15,5 @@ import java.util.Optional;
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Integer> {
     List<Application> findAllByPost(Post post);
-
+    boolean existsByPostIdAndUserId(int postId, int userId);
 }

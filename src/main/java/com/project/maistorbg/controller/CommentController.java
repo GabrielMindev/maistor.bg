@@ -30,6 +30,12 @@ public class CommentController extends AbstractController{
         if (!checkIfAuthorized(s)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
+        if (dto.getText() == null || dto.getText().isBlank() ||  dto.getText().length() > 1000) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        if (dto.getReceiverId() <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
         int id = (int) s.getAttribute("LOGGED_ID");
         CommentInfoDTO addedComment = commentService.add(dto,id, dto.getReceiverId());
         return ResponseEntity.status(HttpStatus.CREATED).body(addedComment);
@@ -39,6 +45,9 @@ public class CommentController extends AbstractController{
     public ResponseEntity<CommentInfoDTO> editComment(@PathVariable int commentId, @RequestBody EditCommentDTO dto, HttpSession s) {
         if (!checkIfAuthorized(s)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        if (dto.getText() == null || dto.getText().isBlank() ||  dto.getText().length() > 1000) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
         int senderId = (int) s.getAttribute("LOGGED_ID");
         CommentInfoDTO editedComment = commentService.edit(commentId, dto, senderId);

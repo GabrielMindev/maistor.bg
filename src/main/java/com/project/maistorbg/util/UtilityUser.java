@@ -30,6 +30,16 @@ public class UtilityUser {
         return password.matches(pattern);
     }
 
+    public static boolean isValidRole(String role) {
+        if (role == null || role.isBlank()) {
+            return false;
+        }
+        if (!(role.equalsIgnoreCase("client") || role.equalsIgnoreCase("workman") || role.equalsIgnoreCase("admin"))) {
+            return false;
+        }
+        return true;
+    }
+
 
     public static String validateAndRestyleNumber(String phoneNumber) {
         String patternString = "^08[789][0-9]{7}$";

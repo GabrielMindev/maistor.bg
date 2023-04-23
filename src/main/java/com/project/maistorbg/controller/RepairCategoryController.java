@@ -5,6 +5,7 @@ import com.project.maistorbg.model.DTOs.RepairCategoryDTOs.EditRepairCategoryDTO
 import com.project.maistorbg.model.DTOs.RepairCategoryDTOs.RepairCategoryInfoDTO;
 import com.project.maistorbg.model.entities.RepairCategory;
 import com.project.maistorbg.service.RepairCategoryService;
+import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-public class RepairCategoryController {
+public class RepairCategoryController extends AbstractController {
 
     @Autowired
     RepairCategoryService repairCategoryService;
@@ -33,24 +34,30 @@ public class RepairCategoryController {
     }
 
     @PostMapping("/categories")
-    public ResponseEntity<RepairCategoryInfoDTO> addCategory(@RequestBody AddRepairCategoryDTO dto) {
+    public ResponseEntity<RepairCategoryInfoDTO> addCategory(@RequestBody AddRepairCategoryDTO dto, HttpSession s) {
+        if (dto.getNameRepair() == null || dto.getNameRepair().isBlank() || dto.getNameRepair().length() > 45) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
         RepairCategory repairCategory = mapper.map(dto, RepairCategory.class);
-        RepairCategory savedRepairCategory = repairCategoryService.addRepairCategory(repairCategory);
+        RepairCategory savedRepairCategory = repairCategoryService.addRepairCategory(repairCategory, (int)s.getAttribute("LOGGED_ID"));
         RepairCategoryInfoDTO categoryDTO = mapper.map(savedRepairCategory, RepairCategoryInfoDTO.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryDTO);
     }
 
     @PutMapping("/categories/{repairCategoryId}")
-    public ResponseEntity<RepairCategoryInfoDTO> editCategory(@PathVariable int repairCategoryId, @RequestBody EditRepairCategoryDTO dto) {
+    public ResponseEntity<RepairCategoryInfoDTO> editCategory(@PathVariable int repairCategoryId, @RequestBody EditRepairCategoryDTO dto, HttpSession s) {
+        if (dto.getNameRepair() == null || dto.getNameRepair().isBlank() || dto.getNameRepair().length() > 45) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
         RepairCategory repairCategory = mapper.map(dto, RepairCategory.class);
-        RepairCategory savedRepairCategory = repairCategoryService.editRepairCategory(repairCategoryId, repairCategory);
+        RepairCategory savedRepairCategory = repairCategoryService.editRepairCategory(repairCategoryId, repairCategory, (int)s.getAttribute("LOGGED_ID"));
         RepairCategoryInfoDTO categoryDTO = mapper.map(savedRepairCategory, RepairCategoryInfoDTO.class);
         return ResponseEntity.ok(categoryDTO);
     }
 
     @DeleteMapping("/categories/{repairCategoryId}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable int repairCategoryId) {
-        repairCategoryService.deleteRepairCategory(repairCategoryId);
+    public ResponseEntity<Void> deleteCategory(@PathVariable int repairCategoryId, HttpSession s) {
+        repairCategoryService.deleteRepairCategory(repairCategoryId, (int)s.getAttribute("LOGGED_ID"));
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

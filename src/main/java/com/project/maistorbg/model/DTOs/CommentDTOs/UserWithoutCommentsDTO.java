@@ -17,5 +17,5 @@ public class UserWithoutCommentsDTO {
     private String email;
     private String phoneNumber;
     private String roleName;
-    private String profilePhotoUrl;
+    private String profilePhoto;
 }
